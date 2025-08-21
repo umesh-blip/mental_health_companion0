@@ -30,6 +30,24 @@ const app = express();
 app.use(cors());                             // Allow frontend to communicate with backend
 app.use(express.json());                     // Parse JSON request bodies
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    message: 'Backend API is running',
+    geminiAvailable: geminiAvailable,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test endpoint
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    message: 'API is working!',
+    geminiStatus: geminiAvailable ? 'available' : 'not available (using demo responses)'
+  });
+});
+
 /**
  * Initialize Google Gemini AI with your API key
  * This connects your chatbot to Google's AI service for intelligent responses
@@ -37,23 +55,34 @@ app.use(express.json());                     // Parse JSON request bodies
  * SECURITY: API key is now loaded from environment variables (.env file)
  * Never commit your .env file to version control!
  */
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+let genAI = null;
+let geminiAvailable = false;
 
-// Validate that API key is present
-if (!process.env.GEMINI_API_KEY) {
-  console.error('❌ ERROR: GEMINI_API_KEY environment variable is not set!');
-  console.error('Please create a .env file in the backend folder with your API key.');
-  console.error('Example: GEMINI_API_KEY=your_api_key_here');
-  process.exit(1);
+if (process.env.GEMINI_API_KEY) {
+  try {
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    geminiAvailable = true;
+    console.log('✅ Gemini AI API key loaded successfully');
+  } catch (error) {
+    console.error('❌ Error initializing Gemini AI:', error.message);
+    geminiAvailable = false;
+  }
+} else {
+  console.warn('⚠️ WARNING: GEMINI_API_KEY environment variable is not set!');
+  console.warn('The chatbot will use demo responses instead of AI-powered responses.');
+  console.warn('To enable AI responses, set GEMINI_API_KEY in your environment variables.');
+  geminiAvailable = false;
 }
-
-console.log('✅ Gemini AI API key loaded successfully');
 
 /**
  * Test function to verify Gemini AI connection
  * This runs when the server starts to ensure AI is working
  */
 async function testGemini() {
+  if (!geminiAvailable) {
+    console.log("Skipping Gemini AI test as it's not available.");
+    return;
+  }
   try {
     // Get the Gemini model (using the latest stable version)
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -182,65 +211,8 @@ app.post('/api/chat', async (req, res) => {
 
   try {
     // PRIMARY: Use Gemini AI for intelligent responses
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    
-    /**
-     * Create a detailed prompt for the AI
-     * This tells Gemini how to behave as UCare
-     */
-    const contextSnippet = getImportantContext();
-    const emotionInstruction = emotion === 'sadness'
-      ? 'The user feels sadness. Respond with empathy, validation, and warmth.'
-      : emotion === 'happiness'
-      ? 'The user feels happy. Respond with encouragement and positive energy.'
-      : emotion === 'anger'
-      ? 'The user may feel anger or frustration. Respond calmly, validate feelings, and suggest gentle coping.'
-      : emotion === 'fear'
-      ? 'The user feels fear or anxiety. Be soothing and offer a simple grounding tip.'
-      : 'Respond with a supportive, friendly tone.';
-
-    const prompt = `You are WizCare, a caring mental health companion for Indian users.\n${emotionInstruction}\nYour role is to:\n1. Gently detect signs of stress, anxiety, or burnout.\n2. Reply warmly in human, emotionally supportive language.\n3. Offer ONE short, practical suggestion (breathing, reframing, tiny step).\n4. Keep reply concise (25–45 words) with 1–2 fitting emojis.\n5. Be encouraging and personal; avoid robotic or clinical tone.\n6. If the user seems in distress or stress is very high, it is appropriate to suggest reaching ${INDIAN_HELPLINE.phone} or ${INDIAN_HELPLINE.website}.\n7. If the user mentions death, dying, or suicide multiple times, assess stress as "ultra high".\n\nRecent context (may help personalize):\n${contextSnippet || '(no recent context)'}\n\nUser message: "${message}"\n\nIMPORTANT: After your response, output a single line exactly as follows on a new line:\nStressLevel: low, mid, high, very high, or ultra high (your best estimate).`;
-
-    // Generate AI response
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const aiResponse = response.text();
-
-    // Helper: sanitize output (remove markdown images/HTML)
-    const sanitizeText = (txt) => {
-      if (!txt) return '';
-      return txt
-        // Remove markdown images ![alt](url)
-        .replace(/!\[[^\]]*\]\([^\)]*\)/g, '')
-        // Remove HTML tags
-        .replace(/<[^>]+>/g, '')
-        // Remove direct image URLs (http/https links ending with .jpg, .jpeg, .png, .gif, .webp, .svg)
-        .replace(/https?:\/\/(\S+\.(jpg|jpeg|png|gif|webp|svg))/gi, '')
-        // Remove markdown links [text](url) but keep the text
-        .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '$1')
-        // Remove any remaining markdown formatting
-        .replace(/[*_`#>\-]/g, '')
-        // Normalize whitespace
-        .replace(/[\t\r]+/g, ' ')
-        .replace(/\n{3,}/g, '\n\n')
-        .trim();
-    };
-
-    // Parse stress level and main text robustly
-    const stressMatch = aiResponse.match(/StressLevel\s*:\s*([^\n]+)/i);
-    let stressLevelText = stressMatch ? String(stressMatch[1]).toLowerCase() : '';
-    let stressLevel = 0; // default to low
-    if (stressLevelText.includes('ultra high')) stressLevel = 4;
-    else if (stressLevelText.includes('very high')) stressLevel = 3;
-    else if (stressLevelText.includes('high')) stressLevel = 2;
-    else if (stressLevelText.includes('mid')) stressLevel = 1;
-
-    // Remove the stress line from the message body
-    let botText = aiResponse.replace(/\n?\s*StressLevel\s*:\s*[^\n]+/i, '').trim();
-    botText = sanitizeText(botText);
-
-    // Fallback if AI returned no usable text (prevents empty bubbles)
-    if (!botText || botText.length < 3) {
+    if (!geminiAvailable) {
+      console.warn('Gemini AI is not available. Falling back to demo response.');
       let fallbackResponse;
       if (isGreeting(message)) {
         fallbackResponse = GREETING_RESPONSES[Math.floor(Math.random() * GREETING_RESPONSES.length)];
@@ -248,14 +220,82 @@ app.post('/api/chat', async (req, res) => {
         fallbackResponse = DEMO_REPLIES[Math.floor(Math.random() * DEMO_REPLIES.length)];
       }
       botText = fallbackResponse;
-    }
+    } else {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      /**
+       * Create a detailed prompt for the AI
+       * This tells Gemini how to behave as UCare
+       */
+      const contextSnippet = getImportantContext();
+      const emotionInstruction = emotion === 'sadness'
+        ? 'The user feels sadness. Respond with empathy, validation, and warmth.'
+        : emotion === 'happiness'
+        ? 'The user feels happy. Respond with encouragement and positive energy.'
+        : emotion === 'anger'
+        ? 'The user may feel anger or frustration. Respond calmly, validate feelings, and suggest gentle coping.'
+        : emotion === 'fear'
+        ? 'The user feels fear or anxiety. Be soothing and offer a simple grounding tip.'
+        : 'Respond with a supportive, friendly tone.';
 
-    // If stress very high or ultra high, append helpline recommendation
-    let finalBotText = botText;
-    if (stressLevel === 3) {
-      finalBotText += `\n\nIf you feel overwhelmed, consider calling ${INDIAN_HELPLINE.phone} or visiting ${INDIAN_HELPLINE.website} for professional support.`;
-    } else if (stressLevel === 4) {
-      finalBotText += `\n\n🚨 CRITICAL: Please call the Indian Mental Health Helpline IMMEDIATELY at ${INDIAN_HELPLINE.phone} or visit ${INDIAN_HELPLINE.website}. Professional help is available 24/7.`;
+      const prompt = `You are WizCare, a caring mental health companion for Indian users.\n${emotionInstruction}\nYour role is to:\n1. Gently detect signs of stress, anxiety, or burnout.\n2. Reply warmly in human, emotionally supportive language.\n3. Offer ONE short, practical suggestion (breathing, reframing, tiny step).\n4. Keep reply concise (25–45 words) with 1–2 fitting emojis.\n5. Be encouraging and personal; avoid robotic or clinical tone.\n6. If the user seems in distress or stress is very high, it is appropriate to suggest reaching ${INDIAN_HELPLINE.phone} or ${INDIAN_HELPLINE.website}.\n7. If the user mentions death, dying, or suicide multiple times, assess stress as "ultra high".\n\nRecent context (may help personalize):\n${contextSnippet || '(no recent context)'}\n\nUser message: "${message}"\n\nIMPORTANT: After your response, output a single line exactly as follows on a new line:\nStressLevel: low, mid, high, very high, or ultra high (your best estimate).`;
+
+      // Generate AI response
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const aiResponse = response.text();
+
+      // Helper: sanitize output (remove markdown images/HTML)
+      const sanitizeText = (txt) => {
+        if (!txt) return '';
+        return txt
+          // Remove markdown images ![alt](url)
+          .replace(/!\[[^\]]*\]\([^\)]*\)/g, '')
+          // Remove HTML tags
+          .replace(/<[^>]+>/g, '')
+          // Remove direct image URLs (http/https links ending with .jpg, .jpeg, .png, .gif, .webp, .svg)
+          .replace(/https?:\/\/(\S+\.(jpg|jpeg|png|gif|webp|svg))/gi, '')
+          // Remove markdown links [text](url) but keep the text
+          .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '$1')
+          // Remove any remaining markdown formatting
+          .replace(/[*_`#>\-]/g, '')
+          // Normalize whitespace
+          .replace(/[\t\r]+/g, ' ')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim();
+      };
+
+      // Parse stress level and main text robustly
+      const stressMatch = aiResponse.match(/StressLevel\s*:\s*([^\n]+)/i);
+      let stressLevelText = stressMatch ? String(stressMatch[1]).toLowerCase() : '';
+      let stressLevel = 0; // default to low
+      if (stressLevelText.includes('ultra high')) stressLevel = 4;
+      else if (stressLevelText.includes('very high')) stressLevel = 3;
+      else if (stressLevelText.includes('high')) stressLevel = 2;
+      else if (stressLevelText.includes('mid')) stressLevel = 1;
+
+      // Remove the stress line from the message body
+      let botText = aiResponse.replace(/\n?\s*StressLevel\s*:\s*[^\n]+/i, '').trim();
+      botText = sanitizeText(botText);
+
+      // Fallback if AI returned no usable text (prevents empty bubbles)
+      if (!botText || botText.length < 3) {
+        let fallbackResponse;
+        if (isGreeting(message)) {
+          fallbackResponse = GREETING_RESPONSES[Math.floor(Math.random() * GREETING_RESPONSES.length)];
+        } else {
+          fallbackResponse = DEMO_REPLIES[Math.floor(Math.random() * DEMO_REPLIES.length)];
+        }
+        botText = fallbackResponse;
+      }
+
+      // If stress very high or ultra high, append helpline recommendation
+      let finalBotText = botText;
+      if (stressLevel === 3) {
+        finalBotText += `\n\nIf you feel overwhelmed, consider calling ${INDIAN_HELPLINE.phone} or visiting ${INDIAN_HELPLINE.website} for professional support.`;
+      } else if (stressLevel === 4) {
+        finalBotText += `\n\n🚨 CRITICAL: Please call the Indian Mental Health Helpline IMMEDIATELY at ${INDIAN_HELPLINE.phone} or visit ${INDIAN_HELPLINE.website}. Professional help is available 24/7.`;
+      }
     }
 
     // Send both response and stressLevel
@@ -263,8 +303,8 @@ app.post('/api/chat', async (req, res) => {
     return res.json({ response: finalBotText, stressLevel });
     
   } catch (error) {
-    // FALLBACK: If AI fails, use demo responses
-    console.error('Gemini AI error:', error);
+    // FALLBACK: If anything fails, use demo responses
+    console.error('Chat API error:', error.message);
     
     let fallbackResponse;
     if (isGreeting(message)) {
@@ -273,7 +313,11 @@ app.post('/api/chat', async (req, res) => {
       fallbackResponse = DEMO_REPLIES[Math.floor(Math.random() * DEMO_REPLIES.length)];
     }
     
-    return res.json({ response: fallbackResponse });
+    // Always return a response, never let the request hang
+    return res.json({ 
+      response: fallbackResponse,
+      error: 'AI service temporarily unavailable, using demo response'
+    });
   }
 });
 
