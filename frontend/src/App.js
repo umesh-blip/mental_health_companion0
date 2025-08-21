@@ -194,7 +194,7 @@ const HEALTH_TIPS = [
 /**
  * Add Sidebar component for left panel
  */
-const Sidebar = ({ stressLevel, showWarning }) => (
+const Sidebar = ({ stressLevel, showWarning, onLogout }) => (
   <Box className="sidebar" sx={{
     width: 280,
     minWidth: 220,
@@ -227,7 +227,7 @@ const Sidebar = ({ stressLevel, showWarning }) => (
     <Button 
       variant="outlined" 
       color="error" 
-      onClick={handleLogout}
+      onClick={onLogout}
       sx={{ width: '100%', borderRadius: 3, mb: 4, fontWeight: 'bold', fontSize: '1rem', py: 1 }}
     >
       Logout
