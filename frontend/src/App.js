@@ -568,7 +568,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'row' }}>
         {/* Sidebar */}
-        <Sidebar stressLevel={stressLevel} showWarning={showWarning} />
+        <Sidebar stressLevel={stressLevel} showWarning={showWarning} onLogout={handleLogout} />
         {/* Main Chat Area */}
         <Box sx={{ flex: 1, ml: { xs: 0, sm: '280px' }, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           {/* Top Navigation Bar */}
