@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: ucare-chatbot-backend
+    name: mental-health-companion
     env: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm run install-all
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -12,5 +12,11 @@ services:
         value: 10000
       - key: GEMINI_API_KEY
         sync: false
+        description: "Your Google Gemini API key for AI chat functionality"
     healthCheckPath: /api/chat
     autoDeploy: true
+    buildFilter:
+      paths:
+        - "**/*"
+        - "!node_modules/**"
+        - "!.git/**"
