@@ -5,12 +5,12 @@
   height: 100vh;
 }
 
+/* Global background: image with subtle dark overlay for readability */
 body {
-  background: linear-gradient(135deg, #181c2f 0%, #23244d 100%);
+  background: linear-gradient(135deg, rgba(24, 28, 47, 0.65), rgba(35, 36, 77, 0.65)), url('./assets/img12.jpg') center/cover fixed no-repeat !important;
   min-height: 100vh;
   margin: 0;
   font-family: 'Montserrat', Arial, sans-serif;
-  /* Prevent body scrolling */
   overflow: hidden;
 }
 
@@ -198,6 +198,13 @@ body {
   transform: translate(-50%, -50%);
   width: 420px; /* fixed width */
   height: 640px; /* fixed height */
+}
+
+/* Chat card: light green + white gradient background */
+.chat-card.fixed {
+  background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%) !important;
+  border: 1px solid #b2dfdb !important;
+  box-shadow: 0 10px 40px rgba(109,40,217,0.08), 0 6px 30px rgba(76,175,80,0.10) inset !important;
 }
 
 /* Responsiveness: keep card fixed-size feel but adapt to small screens */
@@ -657,5 +664,31 @@ textarea:focus-visible {
   .chat-card.fixed {
     left: calc(50% + 140px);
   }
+}
+
+/* Message input box: tinted white background */
+.chat-card .MuiTextField-root,
+.MuiTextField-root input,
+.MuiTextField-root textarea {
+  background: rgba(255,255,255,0.85) !important;
+  border-radius: 18px !important;
+  color: #222 !important;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.04);
+}
+
+/* Optional: adjust placeholder color for better contrast */
+.MuiTextField-root input::placeholder,
+.MuiTextField-root textarea::placeholder {
+  color: #888 !important;
+  opacity: 1;
+}
+
+/* Bot message bubble: solid green background */
+.message-bubble.bot {
+  background: #4CAF50 !important;
+  color: #fff !important;
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 2px 8px rgba(76,175,80,0.10);
 }
 

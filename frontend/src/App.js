@@ -36,6 +36,9 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 
+// Import the new Code Wizard avatar image
+import codeWizardAvatar from './assets/codewizard.jpeg';
+
 /**
  * Material-UI Theme Configuration
  * This defines the color scheme and styling for your chatbot
@@ -79,7 +82,7 @@ const WizardAvatarSVG = () => (
   </svg>
 );
 
-// Image-based avatar that falls back to SVG if the image is not found
+// Update DoctorAvatarImage to use the new image
 const DoctorAvatarImage = ({ size = 24, className }) => {
   const [errored, setErrored] = React.useState(false);
   if (errored) {
@@ -87,7 +90,7 @@ const DoctorAvatarImage = ({ size = 24, className }) => {
   }
   return (
     <img
-      src="/codewizard.jpeg"
+      src={codeWizardAvatar}
       alt="Wizard Assistant"
       width={size}
       height={size}
