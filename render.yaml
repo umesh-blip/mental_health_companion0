@@ -3,13 +3,15 @@ staticSites:
     repo: umesh-blip/mental_health_companion0
     branch: main
     rootDir: frontend
-    buildCommand: npm install && npm run build
-    publishPath: frontend/build
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    publishPath: build
     envVars:
       - key: CI
         value: "false"
       - key: SKIP_PREFLIGHT_CHECK
         value: "true"
+      - key: GENERATE_SOURCEMAP
+        value: "false"
 
 services:
   - type: web

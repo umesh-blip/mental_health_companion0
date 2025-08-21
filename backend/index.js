@@ -283,61 +283,52 @@ app.post('/api/chat', async (req, res) => {
  */
 const PORT = process.env.PORT || 5050;
 
-// Serve static files from the React app in production
+// In production, redirect to frontend static site
 if (process.env.NODE_ENV === 'production') {
-  const buildPath = path.join(__dirname, '../frontend/build');
-  const indexPath = path.join(buildPath, 'index.html');
+  // Redirect root to frontend static site
+  app.get('/', (req, res) => {
+    // Redirect to the frontend static site URL
+    // You'll need to replace this with your actual frontend URL from Render
+    const frontendUrl = process.env.FRONTEND_URL || 'https://wizcare-frontend.onrender.com';
+    res.redirect(frontendUrl);
+  });
   
-  // Check if build directory exists
-  if (require('fs').existsSync(buildPath) && require('fs').existsSync(indexPath)) {
-    console.log('✅ Frontend build found, serving static files');
-    app.use(express.static(buildPath));
-    app.get('*', (req, res) => {
-      res.sendFile(indexPath);
-    });
-  } else {
-    console.log('⚠️ Frontend build not found, serving API only');
-    console.log('Build path:', buildPath);
-    console.log('Index path:', indexPath);
-    
-    // Serve a simple HTML page with API info
-    app.get('/', (req, res) => {
-      res.send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>WizCare API</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
-            .container { background: #f5f5f5; padding: 20px; border-radius: 8px; }
-            .error { color: #d32f2f; background: #ffebee; padding: 10px; border-radius: 4px; }
-            .success { color: #2e7d32; background: #e8f5e8; padding: 10px; border-radius: 4px; }
-          </style>
-        </head>
-        <body>
-          <h1>🚀 WizCare Mental Health Chatbot</h1>
-          <div class="container">
-            <h2>Backend API Status</h2>
-            <div class="success">✅ Backend server is running successfully!</div>
-            <p><strong>API Endpoint:</strong> <code>/api/chat</code></p>
-            <p><strong>Status:</strong> Ready to receive requests</p>
-            
-            <h2>Frontend Status</h2>
-            <div class="error">⚠️ Frontend build not found</div>
-            <p>The React frontend build process may have failed during deployment.</p>
-            <p>Please check the build logs in your deployment platform.</p>
-            
-            <h2>Test the API</h2>
-            <p>You can test the chatbot API using:</p>
-            <pre>curl -X POST http://localhost:${PORT}/api/chat \
-  -H "Content-Type: application/json" \
+  // API routes should still work
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', message: 'Backend API is running' });
+  });
+} else {
+  // In development, serve a simple status page
+  app.get('/', (req, res) => {
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>WizCare API - Development</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+          .container { background: #f5f5f5; padding: 20px; border-radius: 8px; }
+          .success { color: #2e7d32; background: #e8f5e8; padding: 10px; border-radius: 4px; }
+        </style>
+      </head>
+      <body>
+        <h1>🚀 WizCare Mental Health Chatbot - Development</h1>
+        <div class="container">
+          <h2>Backend API Status</h2>
+          <div class="success">✅ Backend server is running successfully!</div>
+          <p><strong>API Endpoint:</strong> <code>/api/chat</code></p>
+          <p><strong>Status:</strong> Ready to receive requests</p>
+          
+          <h2>Test the API</h2>
+          <p>You can test the chatbot API using:</p>
+          <pre>curl -X POST http://localhost:${PORT}/api/chat \\
+  -H "Content-Type: application/json" \\
   -d '{"message": "Hello, how are you?"}'</pre>
-          </div>
-        </body>
-        </html>
-      `);
-    });
-  }
+        </div>
+      </body>
+      </html>
+    `);
+  });
 }
 
 // Start the server
