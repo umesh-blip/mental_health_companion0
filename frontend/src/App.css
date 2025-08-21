@@ -162,14 +162,15 @@ body {
   align-items:center;
   gap:12px;
   padding:14px 18px;
-  background: linear-gradient(90deg,#7c3aed 0%, #06b6d4 100%);
+  background: linear-gradient(90deg, rgba(124,58,237,0.9) 0%, rgba(6,182,212,0.9) 100%);
   color: #fff;
-  box-shadow: 0 6px 18px rgba(124,58,237,0.12) inset;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2) inset;
+  backdrop-filter: blur(10px);
 }
 .chat-card-header img { width: 32px; height: 32px; border-radius: 8px; box-shadow: 0 6px 20px rgba(6,182,212,0.08); }
 .chat-card-header .MuiTypography-root { color: #fff }
 .inline-chat-messages {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
   padding: 20px;
   flex: 1 1 auto;
   overflow-y: auto; /* show vertical scrollbar when content overflows */
@@ -177,6 +178,7 @@ body {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
   overscroll-behavior: contain; /* prevent parent scroll chaining */
+  backdrop-filter: blur(5px);
 }
 .inline-chat-messages::-webkit-scrollbar { width: 10px }
 .inline-chat-messages::-webkit-scrollbar-track { background: transparent }
@@ -200,11 +202,11 @@ body {
   height: 640px; /* fixed height */
 }
 
-/* Chat card: light green + white gradient background */
+/* Chat card: image background with overlay for readability */
 .chat-card.fixed {
-  background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%) !important;
-  border: 1px solid #b2dfdb !important;
-  box-shadow: 0 10px 40px rgba(109,40,217,0.08), 0 6px 30px rgba(76,175,80,0.10) inset !important;
+  background: linear-gradient(135deg, rgba(24, 28, 47, 0.85), rgba(35, 36, 77, 0.85)), url('./assets/img12.jpg') center/cover no-repeat !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  box-shadow: 0 10px 40px rgba(109,40,217,0.08), 0 6px 30px rgba(0,0,0,0.3) inset !important;
 }
 
 /* Responsiveness: keep card fixed-size feel but adapt to small screens */
