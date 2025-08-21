@@ -378,7 +378,7 @@ function App() {
     setMessages([
       { 
         from: 'bot', 
-        text: `Welcome back, ${userData.email}! I\'m your mental health companion. How are you feeling today? I\'m here to listen and support you. 💚` 
+        text: `Welcome back, ${userData.email}! I'm your mental health companion. How are you feeling today? I'm here to listen and support you. 💚` 
       },
     ]);
   };
@@ -391,7 +391,7 @@ function App() {
     setMessages([
       { 
         from: 'bot', 
-        text: `Welcome to WizCare, ${userData.name}! I\'m your mental health companion. How are you feeling today? I\'m here to listen and support you. 💚` 
+        text: `Welcome to WizCare, ${userData.name}! I'm your mental health companion. How are you feeling today? I'm here to listen and support you. 💚` 
       },
     ]);
   };
