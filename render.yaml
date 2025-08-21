@@ -26,6 +26,7 @@ services:
       - key: PORT
         value: 10000
       - key: GEMINI_API_KEY
+        value: AIzaSyBULuatQikkD5kKKSKt8fKtGDD0Gqia4ls
         sync: false
         description: "Your Google Gemini API key for AI chat functionality"
     healthCheckPath: /api/chat
