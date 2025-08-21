@@ -185,9 +185,9 @@ body {
 .message-bubble.user-fill { background: linear-gradient(90deg,#7c3aed,#06b6d4); color:#fff; border-radius:16px; padding:10px 14px }
 
 /* Footer / input area */
-.chat-card footer, .chat-card .MuiBox-root > .MuiBox-root:last-child { }
-.chat-card .MuiBox-root[ sx ] { }
-.chat-card .MuiBox-root:last-child { }
+.chat-card footer, .chat-card .MuiBox-root > .MuiBox-root:last-child { border-top: none; }
+.chat-card .MuiBox-root[ sx ] { border: 0; }
+.chat-card .MuiBox-root:last-child { border: 0; }
 .chat-card .MuiTextField-root { background: rgba(255,255,255,0.02); border-radius: 999px }
 
 /* Fixed chat card positioning */
@@ -516,8 +516,9 @@ textarea:focus-visible {
   object-fit: cover; /* Ensure image covers the area properly */
   width: auto;
   height: auto;
-  max-width: 100%;
-  max-height: 100%;
+  /* Prevent accidental full-screen rendering */
+  max-width: 64px;
+  max-height: 64px;
 }
 
 /* Floating Chat Widget Styles */

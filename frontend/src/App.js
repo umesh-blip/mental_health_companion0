@@ -96,7 +96,7 @@ const DoctorAvatarImage = ({ size = 24, className }) => {
       height={size}
       onError={() => setErrored(true)}
       className={className || 'doctor-avatar-img'}
-      style={{ marginRight: 8, borderRadius: '50%', boxShadow: '0 2px 6px rgba(0,0,0,0.12)' }}
+      style={{ width: size, height: size, marginRight: 8, borderRadius: '50%', boxShadow: '0 2px 6px rgba(0,0,0,0.12)' }}
     />
   );
 };
