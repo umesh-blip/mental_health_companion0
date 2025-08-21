@@ -5,9 +5,9 @@
   height: 100vh;
 }
 
-/* Global background: image with subtle dark overlay for readability */
+/* Global background: calm, soothing gradient */
 body {
-  background: linear-gradient(135deg, rgba(24, 28, 47, 0.65), rgba(35, 36, 77, 0.65)), url('./assets/img12.jpg') center/cover fixed no-repeat !important;
+  background: linear-gradient(135deg, #e8f5e9 0%, #f3e5f5 25%, #e3f2fd 50%, #f1f8e9 75%, #fff3e0 100%) !important;
   min-height: 100vh;
   margin: 0;
   font-family: 'Montserrat', Arial, sans-serif;
