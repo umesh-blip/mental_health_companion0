@@ -15,6 +15,8 @@
 // Import React hooks and components
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
+import Login from './Login';
+import Signup from './Signup';
 
 // Import Material-UI components for the user interface
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -219,8 +221,16 @@ const Sidebar = ({ stressLevel, showWarning }) => (
     <Button variant="contained" color="error" sx={{ width: '100%', borderRadius: 3, mb: 2, fontWeight: 'bold', fontSize: '1rem', py: 1 }}>
       New Chat
     </Button>
-    <Button variant="contained" color="inherit" sx={{ width: '100%', borderRadius: 3, mb: 4, fontWeight: 'bold', fontSize: '1rem', py: 1, bgcolor: '#18181b', color: 'white', '&:hover': { bgcolor: '#27272a' } }}>
+    <Button variant="contained" color="inherit" sx={{ width: '100%', borderRadius: 3, mb: 2, fontWeight: 'bold', fontSize: '1rem', py: 1, bgcolor: '#18181b', color: 'white', '&:hover': { bgcolor: '#27272a' } }}>
       Chat on iOS app
+    </Button>
+    <Button 
+      variant="outlined" 
+      color="error" 
+      onClick={handleLogout}
+      sx={{ width: '100%', borderRadius: 3, mb: 4, fontWeight: 'bold', fontSize: '1rem', py: 1 }}
+    >
+      Logout
     </Button>
     <Box sx={{ width: '100%', mt: 2 }}>
       <StressMeter level={stressLevel} showWarning={showWarning} />
@@ -238,6 +248,11 @@ function App() {
    * State Management using React Hooks
    * These variables store the current state of your chatbot
    */
+  
+  // Authentication state
+  const [user, setUser] = useState(null);
+  const [showLogin, setShowLogin] = useState(true);
+  const [showSignup, setShowSignup] = useState(false);
   
   // Store all chat messages (both user and bot)
   const [messages, setMessages] = useState([
@@ -268,6 +283,24 @@ function App() {
 
   // Add showWarning state to App
   const [showWarning, setShowWarning] = useState(false);
+
+  // Check if user is already logged in on component mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try {
+        const userData = JSON.parse(savedUser);
+        if (userData.isLoggedIn) {
+          setUser(userData);
+          setShowLogin(false);
+          setShowSignup(false);
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('user');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     // Auto-scroll to bottom when new messages arrive only if user is near bottom
@@ -332,6 +365,59 @@ function App() {
   const checkVeryHighStress = (message) => {
     const lower = message.toLowerCase();
     return deathKeywords.some(k => lower.includes(k));
+  };
+
+  /**
+   * Authentication Handler Functions
+   */
+  const handleLogin = (userData) => {
+    setUser(userData);
+    setShowLogin(false);
+    setShowSignup(false);
+    // Add personalized welcome message
+    setMessages([
+      { 
+        from: 'bot', 
+        text: `Welcome back, ${userData.email}! I\'m your mental health companion. How are you feeling today? I\'m here to listen and support you. 💚` 
+      },
+    ]);
+  };
+
+  const handleSignup = (userData) => {
+    setUser(userData);
+    setShowLogin(false);
+    setShowSignup(false);
+    // Add personalized welcome message for new users
+    setMessages([
+      { 
+        from: 'bot', 
+        text: `Welcome to WizCare, ${userData.name}! I\'m your mental health companion. How are you feeling today? I\'m here to listen and support you. 💚` 
+      },
+    ]);
+  };
+
+  const handleSwitchToSignup = () => {
+    setShowLogin(false);
+    setShowSignup(true);
+  };
+
+  const handleSwitchToLogin = () => {
+    setShowSignup(false);
+    setShowLogin(true);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setShowLogin(true);
+    setShowSignup(false);
+    localStorage.removeItem('user');
+    // Reset chat messages
+    setMessages([
+      { 
+        from: 'bot', 
+        text: 'Welcome to WizCare! I\'m your mental health companion. How are you feeling today? I\'m here to listen and support you. 💚' 
+      },
+    ]);
   };
 
   /**
@@ -460,6 +546,24 @@ function App() {
    * Render the Chatbot Interface
    * This returns the JSX that creates your chatbot's visual appearance
    */
+  // Show login/signup if user is not authenticated
+  if (!user) {
+    if (showLogin) {
+      return (
+        <ThemeProvider theme={theme}>
+          <Login onLogin={handleLogin} onSwitchToSignup={handleSwitchToSignup} />
+        </ThemeProvider>
+      );
+    }
+    if (showSignup) {
+      return (
+        <ThemeProvider theme={theme}>
+          <Signup onSignup={handleSignup} onSwitchToLogin={handleSwitchToLogin} />
+        </ThemeProvider>
+      );
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'row' }}>

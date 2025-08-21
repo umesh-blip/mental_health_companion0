@@ -1,0 +1,227 @@
+/* Login and Signup Page Styles */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f8ff 0%, #f5f0ff 20%, #f0fff0 40%, #fff8f0 60%, #f0f0ff 80%, #fff0f5 100%);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.back-button:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.logo-container {
+  margin-bottom: 16px;
+}
+
+.logo-icon {
+  font-size: 48px !important;
+  color: #4CAF50;
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-title {
+  color: #2c3e50;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 28px;
+}
+
+.login-subtitle {
+  color: #7f8c8d;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  margin-bottom: 8px;
+}
+
+.form-field .MuiOutlinedInput-root {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.form-field .MuiOutlinedInput-root:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-field .MuiOutlinedInput-root.Mui-focused {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.2);
+}
+
+.form-field .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(76, 175, 80, 0.3);
+  border-width: 2px;
+}
+
+.form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #4CAF50;
+  border-width: 2px;
+}
+
+.login-button {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: white;
+  padding: 14px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 8px;
+}
+
+.login-button:hover {
+  background: linear-gradient(135deg, #45a049, #5cb85c);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+}
+
+.login-button:disabled {
+  background: #ccc;
+  transform: none;
+  box-shadow: none;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.footer-text {
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.switch-button {
+  color: #4CAF50;
+  font-weight: 600;
+  text-transform: none;
+  padding: 4px 8px;
+  margin-left: 4px;
+}
+
+.switch-button:hover {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+}
+
+.error-alert {
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .login-container {
+    padding: 16px;
+  }
+  
+  .login-card {
+    padding: 32px 24px;
+    border-radius: 20px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+  }
+  
+  .login-subtitle {
+    font-size: 14px;
+  }
+  
+  .form-field {
+    margin-bottom: 16px;
+  }
+  
+  .login-button {
+    padding: 12px;
+    font-size: 15px;
+  }
+}
+
+/* Animation for form fields */
+.form-field .MuiOutlinedInput-root {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animation for form fields */
+.form-field:nth-child(1) { animation-delay: 0.1s; }
+.form-field:nth-child(2) { animation-delay: 0.2s; }
+.form-field:nth-child(3) { animation-delay: 0.3s; }
+.form-field:nth-child(4) { animation-delay: 0.4s; }
+
+/* Loading state enhancements */
+.login-button .MuiCircularProgress-root {
+  color: white;
+}
+
+/* Focus states for accessibility */
+.form-field .MuiOutlinedInput-root:focus-within {
+  outline: 2px solid #4CAF50;
+  outline-offset: 2px;
+}
+
+/* Hover effects for interactive elements */
+.switch-button:hover,
+.back-button:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
