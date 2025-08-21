@@ -5,8 +5,11 @@ services:
     plan: free
     buildCommand: |
       npm install
-      cd frontend && npm install && npm run build
+      cd frontend && npm install
+      cd frontend && npm run build
       cd ../backend && npm install
+      echo "Build completed successfully"
+      ls -la frontend/build/
     startCommand: npm start
     envVars:
       - key: NODE_ENV
