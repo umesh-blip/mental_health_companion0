@@ -3,7 +3,10 @@ services:
     name: mental-health-companion
     env: node
     plan: free
-    buildCommand: npm run install-all
+    buildCommand: |
+      npm install
+      cd frontend && npm install && npm run build
+      cd ../backend && npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -15,8 +18,3 @@ services:
         description: "Your Google Gemini API key for AI chat functionality"
     healthCheckPath: /api/chat
     autoDeploy: true
-    buildFilter:
-      paths:
-        - "**/*"
-        - "!node_modules/**"
-        - "!.git/**"
