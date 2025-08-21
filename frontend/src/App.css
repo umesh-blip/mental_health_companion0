@@ -5,9 +5,9 @@
   height: 100vh;
 }
 
-/* Global background: calm, soothing gradient */
+/* Global background: very calm, soft gradient */
 body {
-  background: linear-gradient(135deg, #e8f5e9 0%, #f3e5f5 25%, #e3f2fd 50%, #f1f8e9 75%, #fff3e0 100%) !important;
+  background: linear-gradient(135deg, #f0f8ff 0%, #f5f0ff 20%, #f0fff0 40%, #fff8f0 60%, #f0f0ff 80%, #fff0f5 100%) !important;
   min-height: 100vh;
   margin: 0;
   font-family: 'Montserrat', Arial, sans-serif;
