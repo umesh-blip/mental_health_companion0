@@ -1,16 +1,25 @@
+staticSites:
+  - name: wizcare-frontend
+    repo: umesh-blip/mental_health_companion0
+    branch: main
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    publishPath: frontend/build
+    envVars:
+      - key: CI
+        value: "false"
+      - key: SKIP_PREFLIGHT_CHECK
+        value: "true"
+
 services:
   - type: web
-    name: mental-health-companion
+    name: wizcare-backend
     env: node
     plan: free
     buildCommand: |
-      npm install
-      cd frontend && npm install
-      cd frontend && npm run build
-      cd ../backend && npm install
-      echo "Build completed successfully"
-      ls -la frontend/build/
-    startCommand: npm start
+      npm ci
+      cd backend && npm ci
+    startCommand: node index.js
     envVars:
       - key: NODE_ENV
         value: production
