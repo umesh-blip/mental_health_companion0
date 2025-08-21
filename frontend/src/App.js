@@ -187,6 +187,46 @@ const HEALTH_TIPS = [
 ];
 
 /**
+ * Add Sidebar component for left panel
+ */
+const Sidebar = ({ stressLevel, showWarning }) => (
+  <Box className="sidebar" sx={{
+    width: 280,
+    minWidth: 220,
+    maxWidth: 320,
+    bgcolor: 'background.paper',
+    background: 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    py: 4,
+    px: 2,
+    boxShadow: 3,
+    borderRadius: 0,
+    height: '100vh',
+    position: 'fixed',
+    left: 0,
+    top: 0,
+    zIndex: 10
+  }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
+      <DoctorAvatarImage size={64} />
+      <Typography variant="h5" sx={{ fontWeight: 'bold', mt: 1, color: '#4f46e5', letterSpacing: 1 }}>Code Wizard</Typography>
+    </Box>
+    <Button variant="contained" color="error" sx={{ width: '100%', borderRadius: 3, mb: 2, fontWeight: 'bold', fontSize: '1rem', py: 1 }}>
+      New Chat
+    </Button>
+    <Button variant="contained" color="inherit" sx={{ width: '100%', borderRadius: 3, mb: 4, fontWeight: 'bold', fontSize: '1rem', py: 1, bgcolor: '#18181b', color: 'white', '&:hover': { bgcolor: '#27272a' } }}>
+      Chat on iOS app
+    </Button>
+    <Box sx={{ width: '100%', mt: 2 }}>
+      <StressMeter level={stressLevel} showWarning={showWarning} />
+    </Box>
+    <Box sx={{ flex: 1 }} />
+  </Box>
+);
+
+/**
  * Main App Component
  * This is the heart of your chatbot frontend
  */
@@ -418,144 +458,115 @@ function App() {
    * This returns the JSX that creates your chatbot's visual appearance
    */
   return (
-    // Wrap everything in the Material-UI theme
     <ThemeProvider theme={theme}>
-      {/* Main container for the entire app */}
-      <Box sx={{ 
-        minHeight: '100vh',              // Full screen height
-        bgcolor: 'background.default',   // Use theme background color
-        display: 'flex',                 // Flexbox layout
-        flexDirection: 'column'          // Stack elements vertically
-      }}>
-        
-        {/* Top Navigation Bar */}
-        <AppBar position="static" color="primary" sx={{ 
-          boxShadow: '0 2px 8px rgba(76, 175, 80, 0.2)',  // Subtle shadow
-          background: 'linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%)'  // Green gradient
-        }}>
-          <Toolbar>
-            {/* App Logo */}
-            
-            {/* Chatbot Title */}
-            <Typography variant="h6" sx={{ 
-              flexGrow: 1, 
-              letterSpacing: 1, 
-              fontWeight: 'bold', 
-              color: 'white' 
-            }}>
-              WizCare Chatbot
-            </Typography>
-            
-            {/* Helpline Number Display */}
-            <Chip 
-              label="Helpline: 9152987821" 
-              color="secondary" 
-              size="small"
-              sx={{ fontWeight: 'bold', bgcolor: 'white' }}
-            />
-          </Toolbar>
-        </AppBar>
-
-        {/* Main Chat Container */}
-        <Container maxWidth="md" className="main-container-area" sx={{ 
-          flex: 1,                        // Take remaining space
-          display: 'flex', 
-          flexDirection: 'column', 
-          py: 0                           // No vertical padding - handled by CSS
-        }}>
-          {/* Stress Meter OUTSIDE chat card */}
-          <StressMeter level={stressLevel} showWarning={showWarning} />
-          {/* Inline Chat Card - centered */}
-          <Box sx={{ flex: 1, position: 'relative' }}>
-            <Box className="chat-card fixed" sx={{ borderRadius: 3, boxShadow: 3, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-              <Box className="chat-card-header" sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2, bgcolor: 'primary.main', color: 'white' }}>
-                
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h6" sx={{ m: 0 }}>WizCare Chat</Typography>
-                  <Typography variant="caption" sx={{ opacity: 0.9 }}>Online • Here to help</Typography>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'row' }}>
+        {/* Sidebar */}
+        <Sidebar stressLevel={stressLevel} showWarning={showWarning} />
+        {/* Main Chat Area */}
+        <Box sx={{ flex: 1, ml: { xs: 0, sm: '280px' }, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          {/* Top Navigation Bar */}
+          <AppBar position="static" color="primary" sx={{
+            boxShadow: '0 2px 8px rgba(76, 175, 80, 0.2)',
+            background: 'linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%)'
+          }}>
+            <Toolbar>
+              <DoctorAvatarImage size={36} />
+              <Typography variant="h6" sx={{ flexGrow: 1, letterSpacing: 1, fontWeight: 'bold', color: 'white', ml: 1 }}>
+                Code Wizard
+              </Typography>
+              <Chip
+                label="Helpline: 9152987821"
+                color="secondary"
+                size="small"
+                sx={{ fontWeight: 'bold', bgcolor: 'white' }}
+              />
+            </Toolbar>
+          </AppBar>
+          {/* Main Chat Container */}
+          <Container maxWidth="md" className="main-container-area" sx={{ flex: 1, display: 'flex', flexDirection: 'column', py: 0 }}>
+            {/* Inline Chat Card - centered */}
+            <Box sx={{ flex: 1, position: 'relative' }}>
+              <Box className="chat-card fixed" sx={{ borderRadius: 3, boxShadow: 3, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <Box className="chat-card-header" sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2, bgcolor: 'primary.main', color: 'white' }}>
+                  <DoctorAvatarImage size={32} />
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" sx={{ m: 0 }}>Code Wizard</Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.9 }}>Online • Here to help</Typography>
+                  </Box>
                 </Box>
-              </Box>
-              {/* Messages area: only this scrolls. */}
-              <Box
-                className={`inline-chat-messages ${hasTop ? 'has-top' : ''} ${hasBottom ? 'has-bottom' : ''}`}
-                sx={{ p: 3, flex: 1, position: 'relative' }}
-                ref={messagesRef}
-                onScroll={handleMessagesScroll}
-              >
-                {messages.map((msg, idx) => (
-                  <Box key={idx} sx={{ display: 'flex', mb: 2, justifyContent: msg.from === 'user' ? 'flex-end' : 'flex-start' }}>
-                    {/* REMOVE DoctorAvatarImage from bot replies */}
-                    <Box sx={{ maxWidth: '75%' }}>
-                      <Box className={`message-bubble ${msg.from === 'user' ? 'user-fill' : 'bot'}`} sx={{ p: 1.5 }}>
-                        <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>{msg.text}</Typography>
+                {/* Messages area: only this scrolls. */}
+                <Box
+                  className={`inline-chat-messages ${hasTop ? 'has-top' : ''} ${hasBottom ? 'has-bottom' : ''}`}
+                  sx={{ p: 3, flex: 1, position: 'relative' }}
+                  ref={messagesRef}
+                  onScroll={handleMessagesScroll}
+                >
+                  {messages.map((msg, idx) => (
+                    <Box key={idx} sx={{ display: 'flex', mb: 2, justifyContent: msg.from === 'user' ? 'flex-end' : 'flex-start' }}>
+                      <Box sx={{ maxWidth: '75%' }}>
+                        <Box className={`message-bubble ${msg.from === 'user' ? 'user-fill' : 'bot'}`} sx={{ p: 1.5 }}>
+                          <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>{msg.text}</Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5 }}> </Typography>
                       </Box>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5 }}> </Typography>
                     </Box>
-                  </Box>
-                ))}
-                {loading && (
-                  <Box sx={{ display: 'flex', mb: 2, alignItems: 'center' }}>
-                    {/* REMOVE DoctorAvatarImage from typing indicator */}
-                    <div className="typing-bubble" style={{ marginLeft: 12 }}>
-                      <span className="dot"></span>
-                      <span className="dot"></span>
-                      <span className="dot"></span>
-                    </div>
-                  </Box>
-                )}
-                <div ref={chatEndRef} />
-              </Box>
-
-              <Box className="chat-card-footer" sx={{ p: 2, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', gap: 1, flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
-                  {quickReplies.map((q, i) => (
-                    <Button key={i} size="small" variant="outlined" onClick={() => handleQuickReply(q)} sx={{ borderRadius: 20, fontSize: '0.75rem', px: 1.5, py: 0.5, minHeight: 24, minWidth: 0, lineHeight: 1.1 }}>{q}</Button>
                   ))}
+                  {loading && (
+                    <Box sx={{ display: 'flex', mb: 2, alignItems: 'center' }}>
+                      <div className="typing-bubble" style={{ marginLeft: 12 }}>
+                        <span className="dot"></span>
+                        <span className="dot"></span>
+                        <span className="dot"></span>
+                      </div>
+                    </Box>
+                  )}
+                  <div ref={chatEndRef} />
                 </Box>
-                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                  <TextField fullWidth variant="outlined" placeholder="Type your message..." value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown} multiline minRows={1} maxRows={4} />
-                  <IconButton color="primary" onClick={sendMessage} disabled={loading || !input.trim()} sx={{ bgcolor: '#6d28d9', color: 'white' }}>
-                    <SendIcon />
-                  </IconButton>
+                <Box className="chat-card-footer" sx={{ p: 2, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', gap: 1, flexDirection: 'column' }}>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+                    {quickReplies.map((q, i) => (
+                      <Button key={i} size="small" variant="outlined" onClick={() => handleQuickReply(q)} sx={{ borderRadius: 20, fontSize: '0.75rem', px: 1.5, py: 0.5, minHeight: 24, minWidth: 0, lineHeight: 1.1 }}>{q}</Button>
+                    ))}
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <TextField fullWidth variant="outlined" placeholder="Type your message..." value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown} multiline minRows={1} maxRows={4} />
+                    <IconButton color="primary" onClick={sendMessage} disabled={loading || !input.trim()} sx={{ bgcolor: '#6d28d9', color: 'white' }}>
+                      <SendIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
               </Box>
             </Box>
+          </Container>
+          {/* Footer with Helpline Information */}
+          <Box className="app-footer" sx={{
+            bgcolor: '#f8f9fa',
+            py: 1,
+            textAlign: 'center',
+            borderTop: '1px solid #e0e0e0'
+          }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <EmojiEmotionsIcon sx={{ mr: 1, verticalAlign: 'middle', color: '#4CAF50' }} />
+              <strong>Indian Mental Health Helpline:</strong> {INDIAN_HELPLINE.phone}
+            </Typography>
+            <Typography variant="body2" color="primary">
+              <a
+                href={INDIAN_HELPLINE.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: '#4CAF50',
+                  textDecoration: 'none',
+                  fontWeight: 'bold'
+                }}
+              >
+                Visit Official Helpline Website
+              </a>
+            </Typography>
           </Box>
-        </Container>
-
-        {/* Footer with Helpline Information */}
-        <Box className="app-footer" sx={{ 
-          bgcolor: '#f8f9fa',             // Light gray background
-          py: 1,                          // Reduced vertical padding
-          textAlign: 'center',            // Center text
-          borderTop: '1px solid #e0e0e0'  // Top border
-        }}>
-          
-          {/* Helpline Phone Number */}
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            <EmojiEmotionsIcon sx={{ mr: 1, verticalAlign: 'middle', color: '#4CAF50' }} />
-            <strong>Indian Mental Health Helpline:</strong> {INDIAN_HELPLINE.phone}
-          </Typography>
-          
-          {/* Helpline Website Link */}
-          <Typography variant="body2" color="primary">
-            <a 
-              href={INDIAN_HELPLINE.website} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              style={{ 
-                color: '#4CAF50',
-                textDecoration: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              Visit Official Helpline Website
-            </a>
-          </Typography>
+          <DoctorAvatarFloating visible={doctorVisible} />
+          <div className="doctor-tip-bubble" key={tipIdx}>{HEALTH_TIPS[tipIdx]}</div>
         </Box>
-        <DoctorAvatarFloating visible={doctorVisible} />
-        <div className="doctor-tip-bubble" key={tipIdx}>{HEALTH_TIPS[tipIdx]}</div>
-        {/* Floating chat removed per request */}
       </Box>
     </ThemeProvider>
   );

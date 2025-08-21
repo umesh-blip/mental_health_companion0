@@ -581,3 +581,81 @@ textarea:focus-visible {
   display: none !important;
 }
 
+/* Sidebar styles */
+.sidebar {
+  background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
+  min-width: 220px;
+  max-width: 320px;
+  width: 280px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px 16px 16px;
+  box-shadow: 2px 0 16px rgba(124,58,237,0.06);
+  z-index: 10;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+/* Main area margin to accommodate sidebar */
+@media (min-width: 600px) {
+  .main-container-area {
+    margin-left: 280px;
+  }
+}
+
+/* Responsive: stack sidebar on top for small screens */
+@media (max-width: 600px) {
+  .sidebar {
+    position: static;
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    height: auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 16px 8px;
+    box-shadow: none;
+    background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
+  }
+  .main-container-area {
+    margin-left: 0;
+  }
+}
+
+/* Sidebar button spacing */
+.sidebar .MuiButton-root {
+  margin-bottom: 16px;
+}
+
+/* Sidebar avatar */
+.sidebar .doctor-avatar-img {
+  width: 64px !important;
+  height: 64px !important;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(76,175,80,0.10);
+}
+
+/* Sidebar stress meter box */
+.sidebar .MuiBox-root {
+  width: 100%;
+}
+
+/* App name in sidebar */
+.sidebar .MuiTypography-h5 {
+  margin-bottom: 24px;
+  color: #4f46e5;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Ensure chat card is not hidden by sidebar */
+@media (min-width: 600px) {
+  .chat-card.fixed {
+    left: calc(50% + 140px);
+  }
+}
+
