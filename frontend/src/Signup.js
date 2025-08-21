@@ -74,12 +74,28 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
       // For demo purposes, accept any valid registration
       if (formData.email && formData.password) {
         // Store user info in localStorage (in real app, use secure tokens)
-        localStorage.setItem('user', JSON.stringify({
+        const userData = {
           name: formData.name,
           email: formData.email,
           isLoggedIn: true,
           signupTime: new Date().toISOString()
-        }));
+        };
+        
+        // Store current user session
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        // Store in users array for future login checks
+        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+        const userExists = existingUsers.some(user => user.email === formData.email);
+        
+        if (!userExists) {
+          existingUsers.push({
+            name: formData.name,
+            email: formData.email,
+            signupTime: new Date().toISOString()
+          });
+          localStorage.setItem('users', JSON.stringify(existingUsers));
+        }
         
         onSignup({
           name: formData.name,

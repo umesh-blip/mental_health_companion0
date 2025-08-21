@@ -59,14 +59,40 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
       // Simulate API call (replace with your actual authentication endpoint)
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, accept any valid email format
+      // Check if this is a Gmail user trying to login for the first time
+      if (formData.email.endsWith('@gmail.com')) {
+        // Check if user exists in localStorage (simulating a database check)
+        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+        const userExists = existingUsers.some(user => user.email === formData.email);
+        
+        if (!userExists) {
+          throw new Error('Email or password is wrong. Please try again. If you don\'t have an account, please sign up.');
+        }
+      }
+      
+      // For demo purposes, accept any valid email format (if user exists or not Gmail)
       if (formData.email && formData.password) {
         // Store user info in localStorage (in real app, use secure tokens)
-        localStorage.setItem('user', JSON.stringify({
+        const userData = {
           email: formData.email,
           isLoggedIn: true,
           loginTime: new Date().toISOString()
-        }));
+        };
+        
+        // Store current user session
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        // Store in users array for future login checks (if not already there)
+        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+        const userExists = existingUsers.some(user => user.email === formData.email);
+        
+        if (!userExists) {
+          existingUsers.push({
+            email: formData.email,
+            loginTime: new Date().toISOString()
+          });
+          localStorage.setItem('users', JSON.stringify(existingUsers));
+        }
         
         onLogin({
           email: formData.email,
@@ -99,7 +125,29 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
           <Box component="form" onSubmit={handleSubmit} className="login-form">
             {error && (
               <Alert severity="error" className="error-alert">
-                {error}
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  {error}
+                </Typography>
+                {error.includes('Please try again') && (
+                  <Box sx={{ mt: 1 }}>
+                    <Typography variant="body2" sx={{ color: '#d32f2f', fontWeight: 500 }}>
+                      💡 Don't have an account? 
+                    </Typography>
+                    <Button
+                      variant="text"
+                      onClick={onSwitchToSignup}
+                      sx={{ 
+                        color: '#1976d2', 
+                        textDecoration: 'underline',
+                        p: 0,
+                        minWidth: 'auto',
+                        fontSize: '14px'
+                      }}
+                    >
+                      Click here to sign up
+                    </Button>
+                  </Box>
+                )}
               </Alert>
             )}
 
