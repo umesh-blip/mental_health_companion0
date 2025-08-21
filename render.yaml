@@ -3,7 +3,7 @@ staticSites:
     repo: umesh-blip/mental_health_companion0
     branch: main
     rootDir: frontend
-    buildCommand: npm ci && npm run build
+    buildCommand: npm install && npm run build
     publishPath: frontend/build
     envVars:
       - key: CI
@@ -17,8 +17,8 @@ services:
     env: node
     plan: free
     buildCommand: |
-      npm ci
-      cd backend && npm ci
+      npm install
+      cd backend && npm install
     startCommand: node index.js
     envVars:
       - key: NODE_ENV
