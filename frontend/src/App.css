@@ -7,7 +7,7 @@
 
 /* Global background: image with subtle dark overlay for readability */
 body {
-  background: linear-gradient(135deg, rgba(24, 28, 47, 0.65), rgba(35, 36, 77, 0.65)), url('./assets/img12.jpg') center/cover fixed no-repeat !important;
+  background: linear-gradient(135deg, rgba(24, 28, 47, 0.65), rgba(35, 36, 77, 0.65)), url('./assets/codewizard.jpeg') center/cover fixed no-repeat !important;
   min-height: 100vh;
   margin: 0;
   font-family: 'Montserrat', Arial, sans-serif;
