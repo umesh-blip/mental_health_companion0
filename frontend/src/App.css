@@ -102,7 +102,7 @@ body {
   background: none;
   pointer-events: none;
   transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s;
-  filter: drop-shadow(0 6px 12px rgba(76, 175, 80, 0.18));
+  filter: drop-shadow(0 8px 20px rgba(76, 175, 80, 0.25));
 }
 
 .slide-in-doctor { 
@@ -134,17 +134,17 @@ body {
   left: 120px;
   bottom: 48px;
   z-index: 999;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,249,250,0.95) 100%);
   color: #2c3e50;
-  border: 1px solid rgba(76, 175, 80, 0.15);
-  border-radius: 16px;
-  padding: 8px 12px;
-  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.15);
-  max-width: 280px;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  border-radius: 20px;
+  padding: 12px 16px;
+  box-shadow: 0 12px 32px rgba(76, 175, 80, 0.2);
+  max-width: 300px;
   font-size: 14px;
   font-weight: 500;
   animation: tipSlideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px);
 }
 
 /* Inline chat card styles */
@@ -161,36 +161,54 @@ body {
   display:flex;
   align-items:center;
   gap:12px;
-  padding:14px 18px;
-  background: linear-gradient(90deg, rgba(124,58,237,0.9) 0%, rgba(6,182,212,0.9) 100%);
+  padding:16px 20px;
+  background: linear-gradient(90deg, rgba(124,58,237,0.95) 0%, rgba(6,182,212,0.95) 100%);
   color: #fff;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2) inset;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15) inset;
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .chat-card-header img { width: 32px; height: 32px; border-radius: 8px; box-shadow: 0 6px 20px rgba(6,182,212,0.08); }
 .chat-card-header .MuiTypography-root { color: #fff }
 .inline-chat-messages {
-  background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-  padding: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  padding: 24px;
   flex: 1 1 auto;
   overflow-y: auto; /* show vertical scrollbar when content overflows */
   overflow-x: hidden;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
   overscroll-behavior: contain; /* prevent parent scroll chaining */
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
 }
 .inline-chat-messages::-webkit-scrollbar { width: 10px }
 .inline-chat-messages::-webkit-scrollbar-track { background: transparent }
 .inline-chat-messages::-webkit-scrollbar-thumb { background: linear-gradient(90deg, rgba(124,58,237,0.6), rgba(6,182,212,0.6)); border-radius: 8px }
-.message-bubble.bot { background: rgba(255,255,255,0.06); color:#e6eef6; border-radius:14px; padding:10px 14px }
-.message-bubble.user-fill { background: linear-gradient(90deg,#7c3aed,#06b6d4); color:#fff; border-radius:16px; padding:10px 14px }
+.message-bubble.bot { 
+  background: rgba(255,255,255,0.12); 
+  color:#ffffff; 
+  border-radius:18px; 
+  padding:12px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.message-bubble.user-fill { 
+  background: linear-gradient(90deg,#7c3aed,#06b6d4); 
+  color:#fff; 
+  border-radius:18px; 
+  padding:12px 16px;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+}
 
 /* Footer / input area */
 .chat-card footer, .chat-card .MuiBox-root > .MuiBox-root:last-child { border-top: none; }
 .chat-card .MuiBox-root[ sx ] { border: 0; }
 .chat-card .MuiBox-root:last-child { border: 0; }
-.chat-card .MuiTextField-root { background: rgba(255,255,255,0.02); border-radius: 999px }
+.chat-card .MuiTextField-root { 
+  background: rgba(255,255,255,0.95); 
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
 
 /* Fixed chat card positioning */
 .chat-card.fixed {
@@ -205,8 +223,9 @@ body {
 /* Chat card: image background with overlay for readability */
 .chat-card.fixed {
   background: linear-gradient(135deg, rgba(24, 28, 47, 0.85), rgba(35, 36, 77, 0.85)), url('./assets/img12.jpg') center/cover no-repeat !important;
-  border: 1px solid rgba(255,255,255,0.2) !important;
-  box-shadow: 0 10px 40px rgba(109,40,217,0.08), 0 6px 30px rgba(0,0,0,0.3) inset !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 8px 32px rgba(0,0,0,0.1) inset !important;
+  backdrop-filter: blur(10px);
 }
 
 /* Responsiveness: keep card fixed-size feel but adapt to small screens */
@@ -593,7 +612,7 @@ textarea:focus-visible {
 
 /* Sidebar styles */
 .sidebar {
-  background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
+  background: linear-gradient(135deg, rgba(224,231,255,0.95) 0%, rgba(237,233,254,0.95) 100%);
   min-width: 220px;
   max-width: 320px;
   width: 280px;
@@ -602,11 +621,13 @@ textarea:focus-visible {
   flex-direction: column;
   align-items: center;
   padding: 32px 16px 16px 16px;
-  box-shadow: 2px 0 16px rgba(124,58,237,0.06);
+  box-shadow: 4px 0 24px rgba(124,58,237,0.1);
   z-index: 10;
   position: fixed;
   left: 0;
   top: 0;
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(124,58,237,0.1);
 }
 
 /* Main area margin to accommodate sidebar */
