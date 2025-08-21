@@ -21,10 +21,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { 
   Box, 
   Typography, 
-  Paper, 
   TextField, 
   IconButton, 
-  CircularProgress, 
   AppBar, 
   Toolbar, 
   Container, 
@@ -36,10 +34,7 @@ import {
 
 // Import Material-UI icons
 import SendIcon from '@mui/icons-material/Send';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
-import WarningIcon from '@mui/icons-material/Warning';
 
 /**
  * Material-UI Theme Configuration
@@ -115,92 +110,69 @@ const DoctorAvatarFloating = ({ visible }) => (
 /**
  * Enhanced stress meter component with suicide detection
  */
+// Update stressLevels to 4 stages with emojis
 const stressLevels = [
   { label: 'Low', emoji: '😊', color: '#4CAF50', description: 'Feeling good' },
   { label: 'Mid', emoji: '😐', color: '#FFC107', description: 'Slightly stressed' },
   { label: 'High', emoji: '😟', color: '#FF9800', description: 'Quite stressed' },
-  { label: 'Very High', emoji: '😫', color: '#F44336', description: 'Very stressed' },
-  { label: 'Ultra High', emoji: '🚨', color: '#9C27B0', description: 'Critical - Please seek help' },
+  { label: 'Very High', emoji: '🚨', color: '#F44336', description: 'Critical - Please seek help' },
 ];
 
-const StressMeter = ({ level, deathMentions = 0 }) => {
-  // Show ultra high only if death mentions >= 3
-  const shouldShowUltra = deathMentions >= 3;
-  const currentLevel = shouldShowUltra && level === 3 ? 4 : level;
-  
-  return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      mb: 2, 
-      p: 2,
-      bgcolor: 'rgba(255,255,255,0.9)',
-      borderRadius: 2,
-      border: '1px solid rgba(76,175,80,0.1)'
-    }}>
-      <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold', color: '#2c3e50' }}>
-        Stress Level Indicator
-      </Typography>
-      
-      <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
-        {stressLevels.map((s, idx) => {
-          const isActive = idx === currentLevel;
-          const shouldDisplay = idx < 4 || shouldShowUltra;
-          
-          if (!shouldDisplay) return null;
-          
-          return (
-            <Box key={s.label} sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              mx: 0.5,
-              opacity: isActive ? 1 : 0.4,
-              transition: 'all 0.3s ease'
-            }}>
-              <span style={{ 
-                fontSize: 28, 
-                filter: isActive ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : 'none'
-              }}>
-                {s.emoji}
-              </span>
-              <Typography variant="body2" sx={{ 
-                ml: 0.5, 
-                color: isActive ? s.color : '#888', 
-                fontWeight: isActive ? 'bold' : 'normal',
-                fontSize: '0.75rem'
-              }}>
-                {s.label}
-              </Typography>
-            </Box>
-          );
-        })}
-      </Box>
-      
-      {currentLevel === 4 && (
-        <Alert severity="error" sx={{ mt: 1, width: '100%' }}>
-          <AlertTitle>⚠️ Critical Stress Level Detected</AlertTitle>
-          <Typography variant="body2">
-            Please call the Indian Mental Health Helpline immediately: <strong>{INDIAN_HELPLINE.phone}</strong>
+// Update StressMeter to only show 'Very High' if death-related keywords are detected
+const StressMeter = ({ level, showWarning }) => (
+  <Box sx={{ 
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center', 
+    mb: 2, 
+    p: 2,
+    bgcolor: 'rgba(255,255,255,0.9)',
+    borderRadius: 2,
+    border: '1px solid rgba(76,175,80,0.1)'
+  }}>
+    <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold', color: '#2c3e50' }}>
+      Stress Level Indicator
+    </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+      {stressLevels.map((s, idx) => (
+        <Box key={s.label} sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          mx: 0.5,
+          opacity: idx === level ? 1 : 0.4,
+          transition: 'all 0.3s ease'
+        }}>
+          <span style={{ fontSize: 28, filter: idx === level ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : 'none' }}>
+            {s.emoji}
+          </span>
+          <Typography variant="body2" sx={{ ml: 0.5, color: idx === level ? s.color : '#888', fontWeight: idx === level ? 'bold' : 'normal', fontSize: '0.75rem' }}>
+            {s.label}
           </Typography>
-          <Button 
-            variant="contained" 
-            color="error" 
-            size="small" 
-            sx={{ mt: 1 }}
-            onClick={() => window.open(INDIAN_HELPLINE.website, '_blank')}
-          >
-            Visit Helpline Website
-          </Button>
-        </Alert>
-      )}
-      
-      <Typography variant="caption" sx={{ mt: 1, color: '#666', textAlign: 'center' }}>
-        {stressLevels[currentLevel]?.description}
-      </Typography>
+        </Box>
+      ))}
     </Box>
-  );
-};
+    {showWarning && level === 3 && (
+      <Alert severity="error" sx={{ mt: 1, width: '100%' }}>
+        <AlertTitle>⚠️ Critical Stress Level Detected</AlertTitle>
+        <Typography variant="body2">
+          Please call the Indian Mental Health Helpline immediately: <strong>{INDIAN_HELPLINE.phone}</strong>
+        </Typography>
+        <Button 
+          variant="contained" 
+          color="error" 
+          size="small" 
+          sx={{ mt: 1 }}
+          onClick={() => window.open(INDIAN_HELPLINE.website, '_blank')}
+        >
+          Visit Helpline Website
+        </Button>
+      </Alert>
+    )}
+    <Typography variant="caption" sx={{ mt: 1, color: '#666', textAlign: 'center' }}>
+      {stressLevels[level]?.description}
+    </Typography>
+  </Box>
+);
 
 /**
  * Health-safety rotating tips
@@ -251,12 +223,15 @@ function App() {
   // Track death-related mentions for ultra-high stress detection
   const [deathMentions, setDeathMentions] = useState(0);
 
+  // Add showWarning state to App
+  const [showWarning, setShowWarning] = useState(false);
+
   useEffect(() => {
     // Auto-scroll to bottom when new messages arrive only if user is near bottom
     if (isNearBottom) {
       chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]);
+  }, [messages, isNearBottom]);
 
   const handleMessagesScroll = () => {
     const el = messagesRef.current;
@@ -307,6 +282,13 @@ function App() {
     }
     
     return false;
+  };
+
+  // Add a helper to detect death-related keywords
+  const deathKeywords = ['death', 'killing', 'dieing', 'murder'];
+  const checkVeryHighStress = (message) => {
+    const lower = message.toLowerCase();
+    return deathKeywords.some(k => lower.includes(k));
   };
 
   /**
@@ -362,6 +344,20 @@ function App() {
       if (hasDeathKeywords && deathMentions >= 2) {
         setStressLevel(4); // Ultra high
       }
+      
+      // Update stress level based on message content
+      const isVeryHigh = checkVeryHighStress(input);
+      let newLevel = stressLevel;
+      if (isVeryHigh) {
+        newLevel = 3;
+      } else {
+        // Simple heuristic: longer messages or certain words = higher stress
+        if (input.length > 100) newLevel = 2;
+        else if (input.length > 40) newLevel = 1;
+        else newLevel = 0;
+      }
+      setStressLevel(newLevel);
+      setShowWarning(isVeryHigh);
       
     } catch (e) {
       // Handle any errors that occur
@@ -439,7 +435,6 @@ function App() {
         }}>
           <Toolbar>
             {/* App Logo */}
-            <img src="/logo.svg" alt="WizCare Logo" style={{ width: 22, height: 22, marginRight: 12 }} />
             
             {/* Chatbot Title */}
             <Typography variant="h6" sx={{ 
@@ -469,12 +464,12 @@ function App() {
           py: 0                           // No vertical padding - handled by CSS
         }}>
           {/* Stress Meter OUTSIDE chat card */}
-          <StressMeter level={stressLevel} deathMentions={deathMentions} />
+          <StressMeter level={stressLevel} showWarning={showWarning} />
           {/* Inline Chat Card - centered */}
           <Box sx={{ flex: 1, position: 'relative' }}>
             <Box className="chat-card fixed" sx={{ borderRadius: 3, boxShadow: 3, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
               <Box className="chat-card-header" sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2, bgcolor: 'primary.main', color: 'white' }}>
-                <img src="/codewizard.jpeg" alt="WizCare" style={{ width: 32, height: 32, borderRadius: 8 }} />
+                
                 <Box sx={{ flex: 1 }}>
                   <Typography variant="h6" sx={{ m: 0 }}>WizCare Chat</Typography>
                   <Typography variant="caption" sx={{ opacity: 0.9 }}>Online • Here to help</Typography>
