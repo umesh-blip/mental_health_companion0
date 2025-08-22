@@ -600,6 +600,19 @@ function App() {
                     <Typography variant="h6" sx={{ m: 0 }}>Code Wizard</Typography>
                     <Typography variant="caption" sx={{ opacity: 0.9 }}>Online • Here to help</Typography>
                   </Box>
+                  {user?.isDemoUser && (
+                    <Chip 
+                      label="DEMO MODE" 
+                      size="small" 
+                      color="warning" 
+                      variant="filled"
+                      sx={{ 
+                        fontSize: '0.7rem',
+                        height: 20,
+                        '& .MuiChip-label': { px: 1 }
+                      }}
+                    />
+                  )}
                 </Box>
                 {/* Messages area: only this scrolls. */}
                 <Box

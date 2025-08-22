@@ -9,14 +9,16 @@ import {
   Alert,
   CircularProgress,
   InputAdornment,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import { 
   Email as EmailIcon, 
   Lock as LockIcon, 
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
-  Person as PersonIcon
+  Person as PersonIcon,
+  Info as InfoIcon
 } from '@mui/icons-material';
 import './Login.css';
 
@@ -43,123 +45,119 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
     setError('');
 
     try {
-      // Basic validation
+      // Basic validation - just check if fields are not empty
       if (!formData.email || !formData.password) {
         throw new Error('Please fill in all fields');
       }
 
-      if (!formData.email.includes('@')) {
-        throw new Error('Please enter a valid email address');
-      }
-
-      if (formData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters');
-      }
-
-      // Simulate API call (replace with your actual authentication endpoint)
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // TEMPORARY LOGIN: Accept any credentials for demo purposes
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Check if this is a Gmail user trying to login for the first time
-      if (formData.email.endsWith('@gmail.com')) {
-        // Check if user exists in localStorage (simulating a database check)
-        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-        const userExists = existingUsers.some(user => user.email === formData.email);
-        
-        if (!userExists) {
-          throw new Error('Email or password is wrong. Please try again. If you don\'t have an account, please sign up.');
-        }
-      }
+      // Store user info in localStorage
+      const userData = {
+        email: formData.email,
+        isLoggedIn: true,
+        loginTime: new Date().toISOString(),
+        isDemoUser: true // Mark as demo user
+      };
       
-      // For demo purposes, accept any valid email format (if user exists or not Gmail)
-      if (formData.email && formData.password) {
-        // Store user info in localStorage (in real app, use secure tokens)
-        const userData = {
+      // Store current user session
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Store in users array for future reference
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const userExists = existingUsers.some(user => user.email === formData.email);
+      
+      if (!userExists) {
+        existingUsers.push({
           email: formData.email,
-          isLoggedIn: true,
-          loginTime: new Date().toISOString()
-        };
-        
-        // Store current user session
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Store in users array for future login checks (if not already there)
-        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-        const userExists = existingUsers.some(user => user.email === formData.email);
-        
-        if (!userExists) {
-          existingUsers.push({
-            email: formData.email,
-            loginTime: new Date().toISOString()
-          });
-          localStorage.setItem('users', JSON.stringify(existingUsers));
-        }
-        
-        onLogin({
-          email: formData.email,
-          isLoggedIn: true
+          loginTime: new Date().toISOString(),
+          isDemoUser: true
         });
+        localStorage.setItem('users', JSON.stringify(existingUsers));
       }
-    } catch (err) {
-      setError(err.message);
+      
+      onLogin({
+        email: formData.email,
+        isLoggedIn: true,
+        isDemoUser: true
+      });
+      
+    } catch (error) {
+      setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box className="login-container">
-      <Container maxWidth="sm">
-        <Paper elevation={8} className="login-card">
-          <Box className="login-header">
-            <Box className="logo-container">
-              <PersonIcon className="logo-icon" />
-            </Box>
-            <Typography variant="h4" className="login-title">
-              Welcome Back
+    <Container component="main" maxWidth="sm">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper 
+          elevation={24} 
+          sx={{ 
+            padding: 4, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,249,250,0.95) 100%)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.3)',
+            borderRadius: 3,
+            width: '100%',
+            maxWidth: 450
+          }}
+        >
+          {/* Demo Mode Banner */}
+          <Box sx={{ mb: 3, textAlign: 'center' }}>
+            <Chip 
+              icon={<InfoIcon />}
+              label="DEMO MODE - Any Credentials Accepted"
+              color="primary"
+              variant="filled"
+              sx={{ 
+                mb: 2,
+                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                color: 'white',
+                fontWeight: 'bold'
+              }}
+            />
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              🎯 <strong>Demo Login:</strong> Enter any email and password to access the chatbot
             </Typography>
-            <Typography variant="body1" className="login-subtitle">
-              Sign in to continue to your mental health companion
+            <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+              Example: demo@test.com / password123
             </Typography>
           </Box>
 
-          <Box component="form" onSubmit={handleSubmit} className="login-form">
-            {error && (
-              <Alert severity="error" className="error-alert">
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  {error}
-                </Typography>
-                {error.includes('Please try again') && (
-                  <Box sx={{ mt: 1 }}>
-                    <Typography variant="body2" sx={{ color: '#d32f2f', fontWeight: 500 }}>
-                      💡 Don't have an account? 
-                    </Typography>
-                    <Button
-                      variant="text"
-                      onClick={onSwitchToSignup}
-                      sx={{ 
-                        color: '#1976d2', 
-                        textDecoration: 'underline',
-                        p: 0,
-                        minWidth: 'auto',
-                        fontSize: '14px'
-                      }}
-                    >
-                      Click here to sign up
-                    </Button>
-                  </Box>
-                )}
-              </Alert>
-            )}
+          <Typography component="h1" variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1976d2' }}>
+            Welcome to WizCare
+          </Typography>
+          
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3, textAlign: 'center' }}>
+            Your AI Mental Health Companion
+          </Typography>
 
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
             <TextField
+              margin="normal"
+              required
               fullWidth
-              name="email"
+              id="email"
               label="Email Address"
-              type="email"
+              name="email"
+              autoComplete="email"
+              autoFocus
               value={formData.email}
               onChange={handleChange}
-              variant="outlined"
-              className="form-field"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -167,18 +165,19 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
                   </InputAdornment>
                 ),
               }}
-              required
+              sx={{ mb: 2 }}
             />
-
             <TextField
+              margin="normal"
+              required
               fullWidth
               name="password"
               label="Password"
               type={showPassword ? 'text' : 'password'}
+              id="password"
+              autoComplete="current-password"
               value={formData.password}
               onChange={handleChange}
-              variant="outlined"
-              className="form-field"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -188,6 +187,7 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
+                      aria-label="toggle password visibility"
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
                     >
@@ -196,39 +196,56 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
                   </InputAdornment>
                 ),
               }}
-              required
+              sx={{ mb: 3 }}
             />
-
+            
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+            
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              className="login-button"
               disabled={loading}
+              sx={{ 
+                mt: 2, 
+                mb: 2,
+                py: 1.5,
+                background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #1565c0 30%, #1976d2 90%)',
+                }
+              }}
             >
               {loading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
-                'Sign In'
+                '🚀 Enter WizCare (Demo Mode)'
               )}
             </Button>
-
-            <Box className="login-footer">
-              <Typography variant="body2" className="footer-text">
+            
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Typography variant="body2" color="text.secondary">
                 Don't have an account?{' '}
                 <Button
-                  variant="text"
                   onClick={onSwitchToSignup}
-                  className="switch-button"
+                  sx={{ 
+                    textTransform: 'none',
+                    color: '#1976d2',
+                    '&:hover': { textDecoration: 'underline' }
+                  }}
                 >
-                  Sign Up
+                  Sign up here
                 </Button>
               </Typography>
             </Box>
           </Box>
         </Paper>
-      </Container>
-    </Box>
+      </Box>
+    </Container>
   );
 };
 

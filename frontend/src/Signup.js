@@ -9,7 +9,8 @@ import {
   Alert,
   CircularProgress,
   InputAdornment,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import { 
   Email as EmailIcon, 
@@ -17,7 +18,7 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
   Person as PersonIcon,
-  ArrowBack as ArrowBackIcon
+  Info as InfoIcon
 } from '@mui/icons-material';
 import './Login.css';
 
@@ -47,109 +48,122 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
     setError('');
 
     try {
-      // Basic validation
+      // Basic validation - just check if fields are not empty
       if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
         throw new Error('Please fill in all fields');
-      }
-
-      if (formData.name.length < 2) {
-        throw new Error('Name must be at least 2 characters');
-      }
-
-      if (!formData.email.includes('@')) {
-        throw new Error('Please enter a valid email address');
-      }
-
-      if (formData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters');
       }
 
       if (formData.password !== formData.confirmPassword) {
         throw new Error('Passwords do not match');
       }
 
-      // Simulate API call (replace with your actual registration endpoint)
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // TEMPORARY SIGNUP: Accept any credentials for demo purposes
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 800));
       
-      // For demo purposes, accept any valid registration
-      if (formData.email && formData.password) {
-        // Store user info in localStorage (in real app, use secure tokens)
-        const userData = {
-          name: formData.name,
-          email: formData.email,
-          isLoggedIn: true,
-          signupTime: new Date().toISOString()
-        };
-        
-        // Store current user session
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Store in users array for future login checks
-        const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-        const userExists = existingUsers.some(user => user.email === formData.email);
-        
-        if (!userExists) {
-          existingUsers.push({
-            name: formData.name,
-            email: formData.email,
-            signupTime: new Date().toISOString()
-          });
-          localStorage.setItem('users', JSON.stringify(existingUsers));
-        }
-        
-        onSignup({
-          name: formData.name,
-          email: formData.email,
-          isLoggedIn: true
-        });
-      }
-    } catch (err) {
-      setError(err.message);
+      // Store user info in localStorage
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        isLoggedIn: true,
+        loginTime: new Date().toISOString(),
+        isDemoUser: true // Mark as demo user
+      };
+      
+      // Store current user session
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Store in users array
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      existingUsers.push({
+        name: formData.name,
+        email: formData.email,
+        loginTime: new Date().toISOString(),
+        isDemoUser: true
+      });
+      localStorage.setItem('users', JSON.stringify(existingUsers));
+      
+      onSignup({
+        name: formData.name,
+        email: formData.email,
+        isLoggedIn: true,
+        isDemoUser: true
+      });
+      
+    } catch (error) {
+      setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box className="login-container">
-      <Container maxWidth="sm">
-        <Paper elevation={8} className="login-card">
-          <Box className="login-header">
-            <Button
-              startIcon={<ArrowBackIcon />}
-              onClick={onSwitchToLogin}
-              className="back-button"
-              variant="text"
-            >
-              Back to Login
-            </Button>
-            <Box className="logo-container">
-              <PersonIcon className="logo-icon" />
-            </Box>
-            <Typography variant="h4" className="login-title">
-              Create Account
+    <Container component="main" maxWidth="sm">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper 
+          elevation={24} 
+          sx={{ 
+            padding: 4, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,249,250,0.95) 100%)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.3)',
+            borderRadius: 3,
+            width: '100%',
+            maxWidth: 450
+          }}
+        >
+          {/* Demo Mode Banner */}
+          <Box sx={{ mb: 3, textAlign: 'center' }}>
+            <Chip 
+              icon={<InfoIcon />}
+              label="DEMO MODE - Any Credentials Accepted"
+              color="primary"
+              variant="filled"
+              sx={{ 
+                mb: 2,
+                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                color: 'white',
+                fontWeight: 'bold'
+              }}
+            />
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              🎯 <strong>Demo Signup:</strong> Enter any details to create an account
             </Typography>
-            <Typography variant="body1" className="login-subtitle">
-              Join your mental health companion today
+            <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+              Example: John Doe / john@demo.com / password123
             </Typography>
           </Box>
 
-          <Box component="form" onSubmit={handleSubmit} className="login-form">
-            {error && (
-              <Alert severity="error" className="error-alert">
-                {error}
-              </Alert>
-            )}
+          <Typography component="h1" variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1976d2' }}>
+            Join WizCare
+          </Typography>
+          
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3, textAlign: 'center' }}>
+            Create your account to start your mental health journey
+          </Typography>
 
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
             <TextField
+              margin="normal"
+              required
               fullWidth
-              name="name"
+              id="name"
               label="Full Name"
-              type="text"
+              name="name"
+              autoComplete="name"
+              autoFocus
               value={formData.name}
               onChange={handleChange}
-              variant="outlined"
-              className="form-field"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -157,18 +171,19 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
                   </InputAdornment>
                 ),
               }}
-              required
+              sx={{ mb: 2 }}
             />
-
+            
             <TextField
+              margin="normal"
+              required
               fullWidth
-              name="email"
+              id="email"
               label="Email Address"
-              type="email"
+              name="email"
+              autoComplete="email"
               value={formData.email}
               onChange={handleChange}
-              variant="outlined"
-              className="form-field"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -176,18 +191,20 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
                   </InputAdornment>
                 ),
               }}
-              required
+              sx={{ mb: 2 }}
             />
-
+            
             <TextField
+              margin="normal"
+              required
               fullWidth
               name="password"
               label="Password"
               type={showPassword ? 'text' : 'password'}
+              id="password"
+              autoComplete="new-password"
               value={formData.password}
               onChange={handleChange}
-              variant="outlined"
-              className="form-field"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -197,6 +214,7 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
+                      aria-label="toggle password visibility"
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
                     >
@@ -205,18 +223,20 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
                   </InputAdornment>
                 ),
               }}
-              required
+              sx={{ mb: 2 }}
             />
-
+            
             <TextField
+              margin="normal"
+              required
               fullWidth
               name="confirmPassword"
               label="Confirm Password"
               type={showConfirmPassword ? 'text' : 'password'}
+              id="confirmPassword"
+              autoComplete="new-password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              variant="outlined"
-              className="form-field"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -226,6 +246,7 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
+                      aria-label="toggle confirm password visibility"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       edge="end"
                     >
@@ -234,39 +255,56 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
                   </InputAdornment>
                 ),
               }}
-              required
+              sx={{ mb: 3 }}
             />
-
+            
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+            
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              className="login-button"
               disabled={loading}
+              sx={{ 
+                mt: 2, 
+                mb: 2,
+                py: 1.5,
+                background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #1565c0 30%, #1976d2 90%)',
+                }
+              }}
             >
               {loading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
-                'Create Account'
+                '🚀 Create Account (Demo Mode)'
               )}
             </Button>
-
-            <Box className="login-footer">
-              <Typography variant="body2" className="footer-text">
+            
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Typography variant="body2" color="text.secondary">
                 Already have an account?{' '}
                 <Button
-                  variant="text"
                   onClick={onSwitchToLogin}
-                  className="switch-button"
+                  sx={{ 
+                    textTransform: 'none',
+                    color: '#1976d2',
+                    '&:hover': { textDecoration: 'underline' }
+                  }}
                 >
-                  Sign In
+                  Sign in here
                 </Button>
               </Typography>
             </Box>
           </Box>
         </Paper>
-      </Container>
-    </Box>
+      </Box>
+    </Container>
   );
 };
 
